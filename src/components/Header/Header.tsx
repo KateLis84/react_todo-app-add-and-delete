@@ -5,20 +5,21 @@ type Props = {
   todosLength: number;
   allCompleted: boolean;
   onAddTodo: (title: string) => Promise<void>;
+  isSubmitting: boolean;
 };
 
 export const Header: React.FC<Props> = ({
   todosLength,
   allCompleted,
   onAddTodo,
+  isSubmitting
 }) => {
   const [title, setTitle] = useState('');
-  const [isInputDisabled, setIsInputDisabled] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     inputRef.current?.focus();
-  }, []);
+  }, [isSubmitting]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -30,13 +31,12 @@ export const Header: React.FC<Props> = ({
       return;
     }
 
-    setIsInputDisabled(true);
-
     try {
-      await onAddTodo(trimmedTitle);
-      setTitle('');
+      onAddTodo(trimmedTitle)
+      .then(() => {
+        setTitle('')
+      });
     } finally {
-      setIsInputDisabled(false);
       inputRef.current?.focus();
     }
   };
@@ -60,7 +60,7 @@ export const Header: React.FC<Props> = ({
           placeholder="What needs to be done?"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          disabled={isInputDisabled}
+          disabled={isSubmitting}
         />
         <button type="submit" style={{ display: 'none' }} />
       </form>

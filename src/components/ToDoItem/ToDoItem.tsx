@@ -5,9 +5,11 @@ import classNames from 'classnames';
 type Props = {
   todo: Todo;
   onDelete?: (id: number) => void;
+  isDeleting?: boolean
 };
 
-export const TodoItem: React.FC<Props> = ({ todo, onDelete }) => (
+export const TodoItem: React.FC<Props> = ({ todo, onDelete, isDeleting = false }) => {
+  return (
   <div
     data-cy="Todo"
     className={classNames('todo', {
@@ -36,5 +38,16 @@ export const TodoItem: React.FC<Props> = ({ todo, onDelete }) => (
     >
       ×
     </button>
+
+    <div
+        data-cy="TodoLoader"
+        className={classNames('modal overlay', {
+          'is-active': isDeleting,
+        })}
+      >
+        <div className="modal-background has-background-white-ter" />
+        <div className="loader" />
+      </div>
   </div>
-);
+)};
+

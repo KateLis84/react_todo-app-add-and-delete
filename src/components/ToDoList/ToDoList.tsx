@@ -7,15 +7,22 @@ type Props = {
   loading: boolean;
   tempTodo: Todo | null;
   onDelete: (todoId: number) => void;
+  deletingIds?: number[];
 };
 
 export const TodoList: React.FC<Props> = ({
   todos,
   loading,
   tempTodo,
-  onDelete
-}) => (
-  <section className="todoapp__main" data-cy="TodoList">
+  onDelete,
+  deletingIds = [],
+}) => {
+
+  function isDeleting(todo: Todo): boolean {
+    return deletingIds.includes(todo.id)
+  }
+
+  return (<section className="todoapp__main" data-cy="TodoList">
     {loading && (
       <div data-cy="TodoLoader" className="modal overlay is-active">
         <div className="modal-background has-background-white-ter" />
@@ -24,11 +31,11 @@ export const TodoList: React.FC<Props> = ({
     )}
 
     {todos.map(todo => (
-      <TodoItem key={todo.id} todo={todo} onDelete={onDelete} />
+      <TodoItem key={todo.id} todo={todo} onDelete={onDelete} isDeleting={isDeleting(todo)} />
     ))}
 
     {tempTodo && (
-      <TodoItem key="temp" todo={tempTodo} onDelete={onDelete} />
+      <TodoItem key="temp" todo={tempTodo} onDelete={onDelete} isDeleting={true} />
     )}
-  </section>
-);
+  </section>)
+};

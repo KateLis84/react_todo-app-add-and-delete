@@ -17,6 +17,7 @@ export const App: React.FC = () => {
   const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all');
   const [tempTodo, setTempTodo] = useState<Todo | null>(null);
   const [deletingIds, setDeletingIds] = useState<number[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
 
   useEffect(() => {
@@ -37,11 +38,13 @@ export const App: React.FC = () => {
   }, []);
 
   const handleAddTodo = async (title: string) => {
+    setError('');
     if (!title.trim()) {
       setError('Title should not be empty');
       setTimeout(() => setError(''), 3000);
       return;
     }
+    setIsSubmitting(true);
 
     const temp = {
       id: 0,
@@ -58,7 +61,9 @@ export const App: React.FC = () => {
     } catch {
       setError('Unable to add a todo');
       setTimeout(() => setError(''), 3000);
+      throw error;
     } finally {
+      setIsSubmitting(false);
       setTempTodo(null);
     }
   };
@@ -77,16 +82,19 @@ export const App: React.FC = () => {
   const incompleteTodosCount = todos.filter(todo => !todo.completed).length;
 
   const handleDeleteTodo = async (todoId: number) => {
-    setDeletingIds(current => [...current, todoId]);
-
+    setError('');
+    setDeletingIds(currentIds => [...currentIds, todoId]);
+    setIsSubmitting(true);
     try {
       await deleteTodo(todoId);
       setTodos(current => current.filter(todo => todo.id !== todoId));
     } catch {
       setError('Unable to delete a todo');
       setTimeout(() => setError(''), 3000);
+      throw error;
     } finally {
-      setDeletingIds(current => current.filter(id => id !== todoId));
+      setIsSubmitting(false);
+      setDeletingIds([]);
     }
   };
 
@@ -103,6 +111,7 @@ export const App: React.FC = () => {
           todosLength={todos.length}
           allCompleted={todos.length > 0 && todos.every(todo => todo.completed)}
           onAddTodo={handleAddTodo}
+          isSubmitting={isSubmitting}
         />
 
         <TodoList
@@ -110,6 +119,7 @@ export const App: React.FC = () => {
           loading={loading}
           tempTodo={tempTodo}
           onDelete={handleDeleteTodo}
+          deletingIds={deletingIds}
         />
 
         {todos.length > 0 && (
