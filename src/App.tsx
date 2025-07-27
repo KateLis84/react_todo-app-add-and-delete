@@ -98,6 +98,14 @@ export const App: React.FC = () => {
     }
   };
 
+  const clearCompleted = () => {
+    todos
+      .filter(todo => todo.completed)
+      .forEach(todo => {
+        handleDeleteTodo(todo.id);
+      });
+  };
+
   if (!USER_ID) {
     return <UserWarning />;
   }
@@ -135,6 +143,7 @@ export const App: React.FC = () => {
               className="todoapp__clear-completed"
               data-cy="ClearCompletedButton"
               disabled={todos.every(todo => !todo.completed)}
+              onClick={clearCompleted}
             >
               Clear completed
             </button>
