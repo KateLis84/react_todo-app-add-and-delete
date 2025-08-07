@@ -12,7 +12,7 @@ export const Header: React.FC<Props> = ({
   todosLength,
   allCompleted,
   onAddTodo,
-  isSubmitting
+  isSubmitting,
 }) => {
   const [title, setTitle] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -28,13 +28,13 @@ export const Header: React.FC<Props> = ({
 
     if (!trimmedTitle) {
       onAddTodo('');
+
       return;
     }
 
     try {
-      onAddTodo(trimmedTitle)
-      .then(() => {
-        setTitle('')
+      onAddTodo(trimmedTitle).then(() => {
+        setTitle('');
       });
     } finally {
       inputRef.current?.focus();
@@ -59,7 +59,7 @@ export const Header: React.FC<Props> = ({
           className="todoapp__new-todo"
           placeholder="What needs to be done?"
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={e => setTitle(e.target.value)}
           disabled={isSubmitting}
         />
         <button type="submit" style={{ display: 'none' }} />

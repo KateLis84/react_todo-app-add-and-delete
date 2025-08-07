@@ -9,16 +9,18 @@ import { Header } from './components/Header/Header';
 import { Filter } from './components/Filter/Filter';
 import { Error } from './components/Error/Error';
 import { TodoList } from './components/ToDoList/ToDoList';
+import { Filters } from './types/Filters';
 
 export const App: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all');
+  const [filter, setFilter] = useState<
+    Filters.All | Filters.Active | Filters.Completed
+  >(Filters.All);
   const [tempTodo, setTempTodo] = useState<Todo | null>(null);
   const [deletingIds, setDeletingIds] = useState<number[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
 
   useEffect(() => {
     if (!USER_ID) {
@@ -42,8 +44,10 @@ export const App: React.FC = () => {
     if (!title.trim()) {
       setError('Title should not be empty');
       setTimeout(() => setError(''), 3000);
+
       return;
     }
+
     setIsSubmitting(true);
 
     const temp = {
@@ -57,6 +61,7 @@ export const App: React.FC = () => {
 
     try {
       const createdTodo = await addTodo(title.trim());
+
       setTodos(current => [...current, createdTodo]);
     } catch {
       setError('Unable to add a todo');

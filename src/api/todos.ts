@@ -20,4 +20,3 @@ export const addTodo = (title: string): Promise<Todo> => {
 export const deleteTodo = (todoId: number): Promise<void> => {
   return client.delete(`/todos/${todoId}`);
 };
-
